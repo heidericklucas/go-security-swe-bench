@@ -1,0 +1,15 @@
+diff --git a/app/httpapi/note_handlers.go b/app/httpapi/note_handlers.go
+index 7be76b8..ff36417 100644
+--- a/app/httpapi/note_handlers.go
++++ b/app/httpapi/note_handlers.go
+@@ -2,9 +2,9 @@ package httpapi
+ 
+ import (
+ 	"encoding/json"
++	"html/template"
+ 	"net/http"
+ 	"strconv"
+-	"text/template"
+ 
+ 	"github.com/heidericklucas/go-security-swe-bench/app/store"
+ )
