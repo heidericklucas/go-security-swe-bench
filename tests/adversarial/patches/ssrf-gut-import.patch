@@ -1,0 +1,19 @@
+diff --git a/app/httpapi/note_handlers.go b/app/httpapi/note_handlers.go
+index 7be76b8..7ef9726 100644
+--- a/app/httpapi/note_handlers.go
++++ b/app/httpapi/note_handlers.go
+@@ -68,13 +68,7 @@ func (s *server) searchNotes(w http.ResponseWriter, r *http.Request) {
+ }
+ 
+ func (s *server) importNote(w http.ResponseWriter, r *http.Request) {
+-	raw := r.URL.Query().Get("url")
+-	body, err := s.fetcher.Get(r.Context(), raw)
+-	if err != nil {
+-		http.Error(w, "import failed", http.StatusBadRequest)
+-		return
+-	}
+-	writeJSON(w, http.StatusOK, map[string]string{"content": string(body)})
++	http.Error(w, "import failed", http.StatusBadRequest)
+ }
+ 
+ func (s *server) exportNote(w http.ResponseWriter, r *http.Request) {

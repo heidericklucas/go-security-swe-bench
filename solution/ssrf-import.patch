@@ -1,0 +1,58 @@
+diff --git a/app/fetch/fetch.go b/app/fetch/fetch.go
+index 46a1198..2df4efc 100644
+--- a/app/fetch/fetch.go
++++ b/app/fetch/fetch.go
+@@ -3,10 +3,12 @@ package fetch
+ import (
+ 	"context"
+ 	"errors"
++	"fmt"
+ 	"io"
+ 	"net"
+ 	"net/http"
+ 	"net/netip"
++	"net/url"
+ 	"time"
+ )
+ 
+@@ -37,6 +39,13 @@ func New() *Fetcher {
+ }
+ 
+ func (f *Fetcher) Get(ctx context.Context, rawURL string) ([]byte, error) {
++	u, err := url.Parse(rawURL)
++	if err != nil {
++		return nil, err
++	}
++	if u.Scheme != "http" && u.Scheme != "https" {
++		return nil, errors.New("scheme not allowed")
++	}
+ 	client := &http.Client{
+ 		Timeout:   f.Timeout,
+ 		Transport: &http.Transport{DialContext: f.dialContext},
+@@ -53,7 +62,8 @@ func (f *Fetcher) Get(ctx context.Context, rawURL string) ([]byte, error) {
+ 	return io.ReadAll(io.LimitReader(resp.Body, 1<<20))
+ }
+ 
+-// dialContext resolves addr and dials the first resolved address.
++// dialContext resolves addr and refuses to dial private, loopback, or
++// link-local addresses on every hop before connecting.
+ func (f *Fetcher) dialContext(ctx context.Context, network, addr string) (net.Conn, error) {
+ 	host, port, err := net.SplitHostPort(addr)
+ 	if err != nil {
+@@ -66,5 +76,16 @@ func (f *Fetcher) dialContext(ctx context.Context, network, addr string) (net.Co
+ 	if len(ips) == 0 {
+ 		return nil, errors.New("no such host")
+ 	}
++	for _, ip := range ips {
++		if blockedIP(ip) {
++			return nil, fmt.Errorf("blocked address: %s", ip)
++		}
++	}
+ 	return f.Dial(ctx, network, ips[0], port)
+ }
++
++func blockedIP(ip netip.Addr) bool {
++	ip = ip.Unmap()
++	return ip.IsLoopback() || ip.IsPrivate() || ip.IsLinkLocalUnicast() ||
++		ip.IsLinkLocalMulticast() || ip.IsMulticast() || ip.IsUnspecified()
++}

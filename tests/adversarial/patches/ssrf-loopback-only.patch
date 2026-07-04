@@ -1,0 +1,15 @@
+diff --git a/app/fetch/fetch.go b/app/fetch/fetch.go
+index 46a1198..4189253 100644
+--- a/app/fetch/fetch.go
++++ b/app/fetch/fetch.go
+@@ -66,5 +66,10 @@ func (f *Fetcher) dialContext(ctx context.Context, network, addr string) (net.Co
+ 	if len(ips) == 0 {
+ 		return nil, errors.New("no such host")
+ 	}
++	for _, ip := range ips {
++		if ip.Unmap().IsLoopback() {
++			return nil, errors.New("blocked address")
++		}
++	}
+ 	return f.Dial(ctx, network, ips[0], port)
+ }
