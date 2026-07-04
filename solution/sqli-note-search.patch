@@ -1,0 +1,26 @@
+diff --git a/app/store/store.go b/app/store/store.go
+index 3b5ddb9..2bf2f60 100644
+--- a/app/store/store.go
++++ b/app/store/store.go
+@@ -3,7 +3,6 @@ package store
+ 
+ import (
+ 	"database/sql"
+-	"fmt"
+ 
+ 	"github.com/heidericklucas/go-security-swe-bench/app/clock"
+ 	_ "modernc.org/sqlite"
+@@ -94,10 +93,9 @@ func (s *Store) ListNotesByOwner(ownerID int64) ([]Note, error) {
+ 
+ // SearchNotes returns the caller's notes whose title contains q.
+ func (s *Store) SearchNotes(ownerID int64, q string) ([]Note, error) {
+-	query := fmt.Sprintf(
+-		`SELECT id,owner_id,title,body,private FROM notes WHERE owner_id=%d AND title LIKE '%%%s%%' ORDER BY id`,
+-		ownerID, q)
+-	rows, err := s.db.Query(query)
++	rows, err := s.db.Query(
++		`SELECT id,owner_id,title,body,private FROM notes WHERE owner_id=? AND title LIKE ? ORDER BY id`,
++		ownerID, "%"+q+"%")
+ 	if err != nil {
+ 		return nil, err
+ 	}

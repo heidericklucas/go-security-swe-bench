@@ -1,0 +1,24 @@
+{
+  "id": "sqli-note-search",
+  "title": "SQL injection in search",
+  "cwe": "CWE-89",
+  "owasp": "A03:2021",
+  "problem_statement_file": "tasks/sqli-note-search.md",
+  "test_packages": [
+    "./tests/exploit/...",
+    "./tests/functional/..."
+  ],
+  "fail_to_pass": [
+    "TestSQLi_SearchDoesNotLeakOtherUsersNotes"
+  ],
+  "pass_to_pass": [
+    "TestContract_ImportAllowlistedReturnsContent",
+    "TestContract_OwnerCanReadOwnNote",
+    "TestContract_SearchReturnsOwnerMatches",
+    "TestContract_ValidTokenAccepted",
+    "TestContract_ExportRendersBenignNote",
+    "TestHappyPath_EndToEnd"
+  ],
+  "golden": "solution/sqli-note-search.patch",
+  "reward_type": "binary"
+}
