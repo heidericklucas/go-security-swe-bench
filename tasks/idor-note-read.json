@@ -1,0 +1,24 @@
+{
+  "id": "idor-note-read",
+  "title": "Broken object-level access control",
+  "cwe": "CWE-639",
+  "owasp": "A01:2021",
+  "problem_statement_file": "tasks/idor-note-read.md",
+  "test_packages": [
+    "./tests/exploit/...",
+    "./tests/functional/..."
+  ],
+  "fail_to_pass": [
+    "TestIDOR_CannotReadOthersNote"
+  ],
+  "pass_to_pass": [
+    "TestContract_ImportAllowlistedReturnsContent",
+    "TestContract_OwnerCanReadOwnNote",
+    "TestContract_SearchReturnsOwnerMatches",
+    "TestContract_ValidTokenAccepted",
+    "TestContract_ExportRendersBenignNote",
+    "TestHappyPath_EndToEnd"
+  ],
+  "golden": "solution/idor-note-read.patch",
+  "reward_type": "binary"
+}

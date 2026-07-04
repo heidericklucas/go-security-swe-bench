@@ -1,0 +1,19 @@
+diff --git a/app/httpapi/note_handlers.go b/app/httpapi/note_handlers.go
+index 7be76b8..bc0def3 100644
+--- a/app/httpapi/note_handlers.go
++++ b/app/httpapi/note_handlers.go
+@@ -33,13 +33,7 @@ func (s *server) createNote(w http.ResponseWriter, r *http.Request) {
+ }
+ 
+ func (s *server) getNote(w http.ResponseWriter, r *http.Request) {
+-	id, _ := strconv.ParseInt(r.PathValue("id"), 10, 64)
+-	n, err := s.store.GetNoteByID(id)
+-	if err != nil {
+-		http.Error(w, "not found", http.StatusNotFound)
+-		return
+-	}
+-	writeJSON(w, http.StatusOK, n)
++	http.Error(w, "forbidden", http.StatusForbidden)
+ }
+ 
+ func (s *server) deleteNote(w http.ResponseWriter, r *http.Request) {

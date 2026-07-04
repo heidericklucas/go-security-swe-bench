@@ -1,0 +1,15 @@
+diff --git a/app/httpapi/note_handlers.go b/app/httpapi/note_handlers.go
+index 7be76b8..6bdaa3c 100644
+--- a/app/httpapi/note_handlers.go
++++ b/app/httpapi/note_handlers.go
+@@ -39,6 +39,10 @@ func (s *server) getNote(w http.ResponseWriter, r *http.Request) {
+ 		http.Error(w, "not found", http.StatusNotFound)
+ 		return
+ 	}
++	if claimsFrom(r).UserID != n.OwnerID {
++		http.Error(w, "forbidden", http.StatusForbidden)
++		return
++	}
+ 	writeJSON(w, http.StatusOK, n)
+ }
+ 
