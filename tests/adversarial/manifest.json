@@ -1,0 +1,44 @@
+{
+  "patches": [
+    {
+      "instance": "ssrf-import",
+      "patch": "tests/adversarial/patches/ssrf-gut-import.patch",
+      "note": "gut import (always 400) - caught by positive contract"
+    },
+    {
+      "instance": "ssrf-import",
+      "patch": "tests/adversarial/patches/ssrf-loopback-only.patch",
+      "note": "blocks loopback only - exploit still red"
+    },
+    {
+      "instance": "ssrf-import",
+      "patch": "tests/adversarial/patches/ssrf-delete-test.patch",
+      "note": "deletes the exploit test - rejected by scope guard"
+    },
+    {
+      "instance": "jwt-forged-token",
+      "patch": "tests/adversarial/patches/jwt-reject-all.patch",
+      "note": "rejects all tokens - caught by valid-token contract"
+    },
+    {
+      "instance": "sqli-note-search",
+      "patch": "tests/adversarial/patches/sqli-empty.patch",
+      "note": "empty search - caught by search contract"
+    },
+    {
+      "instance": "idor-note-read",
+      "patch": "tests/adversarial/patches/idor-deny-all.patch",
+      "note": "denies all reads - caught by owner-can-read contract"
+    },
+    {
+      "instance": "xss-note-export",
+      "patch": "tests/adversarial/patches/xss-gut.patch",
+      "note": "guts export - caught by export contract"
+    },
+    {
+      "instance": "pathtraversal-attachment",
+      "patch": "tests/adversarial/patches/path-deny-all.patch",
+      "note": "denies all downloads - caught by happy-path attachment step"
+    }
+  ]
+}
