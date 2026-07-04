@@ -1,0 +1,21 @@
+diff --git a/app/httpapi/note_handlers.go b/app/httpapi/note_handlers.go
+index 7be76b8..0d19408 100644
+--- a/app/httpapi/note_handlers.go
++++ b/app/httpapi/note_handlers.go
+@@ -4,6 +4,7 @@ import (
+ 	"encoding/json"
+ 	"net/http"
+ 	"strconv"
++	"strings"
+ 	"text/template"
+ 
+ 	"github.com/heidericklucas/go-security-swe-bench/app/store"
+@@ -84,6 +85,8 @@ func (s *server) exportNote(w http.ResponseWriter, r *http.Request) {
+ 		http.Error(w, "not found", http.StatusNotFound)
+ 		return
+ 	}
++	n.Body = strings.ReplaceAll(n.Body, "<script>", "")
++	n.Body = strings.ReplaceAll(n.Body, "</script>", "")
+ 	const tpl = `<!doctype html><h1>{{.Title}}</h1><div>{{.Body}}</div>`
+ 	t := template.Must(template.New("export").Parse(tpl))
+ 	w.Header().Set("Content-Type", "text/html; charset=utf-8")

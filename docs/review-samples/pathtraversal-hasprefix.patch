@@ -1,0 +1,22 @@
+diff --git a/app/safepath/safepath.go b/app/safepath/safepath.go
+index 79b12a3..9025272 100644
+--- a/app/safepath/safepath.go
++++ b/app/safepath/safepath.go
+@@ -4,10 +4,15 @@ import (
+ 	"io"
+ 	"os"
+ 	"path/filepath"
++	"strings"
+ )
+ 
+-// Open opens the named file inside baseDir for reading.
++// Open serves name from within baseDir, rejecting paths that escape it.
+ func Open(baseDir, name string) (io.ReadCloser, error) {
+-	p := filepath.Join(baseDir, name)
++	base := filepath.Clean(baseDir)
++	p := filepath.Clean(filepath.Join(base, name))
++	if !strings.HasPrefix(p, base) {
++		return nil, os.ErrPermission
++	}
+ 	return os.Open(p)
+ }
