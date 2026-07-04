@@ -1,0 +1,24 @@
+{
+  "id": "jwt-forged-token",
+  "title": "Forged JWT accepted",
+  "cwe": "CWE-347",
+  "owasp": "A07:2021",
+  "problem_statement_file": "tasks/jwt-forged-token.md",
+  "test_packages": [
+    "./tests/exploit/...",
+    "./tests/functional/..."
+  ],
+  "fail_to_pass": [
+    "TestJWT_ForgedTokenRejected"
+  ],
+  "pass_to_pass": [
+    "TestContract_ImportAllowlistedReturnsContent",
+    "TestContract_OwnerCanReadOwnNote",
+    "TestContract_SearchReturnsOwnerMatches",
+    "TestContract_ValidTokenAccepted",
+    "TestContract_ExportRendersBenignNote",
+    "TestHappyPath_EndToEnd"
+  ],
+  "golden": "solution/jwt-forged-token.patch",
+  "reward_type": "binary"
+}
