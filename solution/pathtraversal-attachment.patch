@@ -1,0 +1,22 @@
+diff --git a/app/safepath/safepath.go b/app/safepath/safepath.go
+index 79b12a3..d2a2a5e 100644
+--- a/app/safepath/safepath.go
++++ b/app/safepath/safepath.go
+@@ -3,11 +3,14 @@ package safepath
+ import (
+ 	"io"
+ 	"os"
+-	"path/filepath"
+ )
+ 
+ // Open opens the named file inside baseDir for reading.
+ func Open(baseDir, name string) (io.ReadCloser, error) {
+-	p := filepath.Join(baseDir, name)
+-	return os.Open(p)
++	root, err := os.OpenRoot(baseDir)
++	if err != nil {
++		return nil, err
++	}
++	defer root.Close()
++	return root.Open(name)
+ }
