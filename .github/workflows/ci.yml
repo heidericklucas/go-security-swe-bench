@@ -1,0 +1,65 @@
+name: ci
+on: { push: { branches: [main] }, pull_request: {} }
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with: { go-version: '1.24.x' }
+
+      # Build
+      - run: make build
+        name: Compile application
+
+      # Format + static analysis
+      - run: make fmt
+        name: gofmt and go vet
+
+      # Test: offline unit + functional
+      - run: make test
+        name: Unit and functional tests
+
+      # Verify: base should reward 0 (prove instances are vulnerable)
+      - run: make verify
+        name: Verify base (expect reward 0)
+
+      # Verify determinism: run 3x
+      - run: make verify && make verify && make verify
+        name: Verify determinism (3 runs)
+
+      # Coverage
+      - run: make cover
+        name: Code coverage report
+
+      # No AI attribution sweep
+      - name: Check for AI attribution
+        run: |
+          set +e
+          found=0
+          
+          # Check commit authors (must be heidericklucas)
+          bad_authors=$(git log --all --format="%an" | grep -v "^heidericklucas$" | sort -u)
+          if [ -n "$bad_authors" ]; then
+            echo "FAIL: Found non-heidericklucas authors: $bad_authors"
+            found=1
+          fi
+          
+          # Check for disallowed phrases in commit messages (case-insensitive)
+          if git log --all --oneline | grep -qi "claude\|generated"; then
+            echo "FAIL: Found AI attribution in commit messages"
+            git log --all --oneline | grep -i "claude\|generated"
+            found=1
+          fi
+          
+          # Check for "Generated with" phrase in files
+          if grep -r "Generated with" --include="*.md" --include="*.go" .; then
+            echo "FAIL: Found 'Generated with' in files"
+            found=1
+          fi
+          
+          if [ $found -eq 1 ]; then
+            echo "AI attribution check FAILED"
+            exit 1
+          fi
+          echo "PASS: No AI attribution found"
